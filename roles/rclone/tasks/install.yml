@@ -31,14 +31,14 @@
 #     state: latest
 #   become: yes
 
-- name: install github module
-  pip:
-    name:
-      - github3.py>=1.0.0a3
-  become: yes
-  tags: "role::rclone.pip"
-
 - block:
+  - name: install github module
+    pip:
+      name:
+        - github3.py>=1.0.0a3
+    become: yes
+    tags: "role::rclone.pip"
+
   - name: detect latest rclone release
     github_release:
       action: latest_release
@@ -51,6 +51,7 @@
       rclone__version: "{{ _rclone__latest.tag }}"
 
   when: rclone__version is undefined or rclone__version == "latest"
+  tags: "role::rclone.github"
 
 - block:
   - name: Make sure that Ansible local facts directory exists
