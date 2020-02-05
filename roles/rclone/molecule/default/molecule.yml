@@ -3,6 +3,8 @@ dependency:
   name: galaxy
 driver:
   name: docker
+  env:
+    MOLECULE_NO_LOG: "false"
 lint:
   name: yamllint
 platforms:
@@ -26,6 +28,8 @@ platforms:
   #   image: balenalib/raspberrypi4-64-debian:buster
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_STDOUT_CALLBACK: yaml
   lint:
     name: ansible-lint
   playbooks:
