@@ -8,6 +8,7 @@
       - unzip
     state: present
   become: yes
+  tags: "role::rclone.packages"
 
 # - name: ensure setuptools
 #   pip:
@@ -21,6 +22,7 @@
     name:
       - github3.py>=1.0.0a3
   become: yes
+  tags: "role::rclone.pip"
 
 - block:
   - name: detect latest rclone release
@@ -50,8 +52,8 @@
       mode: '0755'
     register: rclone__register_facts
 
-  tags: "role::rclone.facts"
   become: yes
+  tags: "role::rclone.facts"
 
 - debug:
     var: ansible_local
