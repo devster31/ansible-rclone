@@ -1,0 +1,27 @@
+---
+- name: remove github module
+  pip:
+    name: github3.py
+    state: absent
+
+- name: remove cron local facts
+  file:
+    path: /etc/ansible/facts.d/rclone.fact
+    state: absent
+
+- name: remove binary
+  file:
+    path: "{{ rclone__binary }}"
+    state: absent
+
+- name: check path empty
+  command: "ls -A {{ rclone__binary | dirname }}"
+  changed_when: no
+  register: rclone__dirname_empty
+
+- name: remove empty dir
+  file:
+    path: "{{ rclone__binary | dirname }}"
+    state: absent
+  when: rclone__dirname_empty.stdout | length == 0
+...

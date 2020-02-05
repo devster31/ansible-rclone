@@ -1,0 +1,19 @@
+---
+- name: Cleanup
+  hosts: all
+  gather_facts: no
+
+  pre_tasks:
+    - wait_for_connection:
+        timeout: 10
+      register: wait_for_instances
+      failed_when: false
+
+    - setup:
+        gather_subset: all
+      when: wait_for_instances.elapsed < 10
+
+  roles:
+    - role: rclone
+      rclone__enabled: no
+      when: wait_for_instances.elapsed < 10

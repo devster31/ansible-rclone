@@ -1,0 +1,43 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  # - name: ubuntu-xenial
+  #   image: ubuntu:xenial
+  - name: ubuntu-bionic
+    image: ubuntu:bionic
+  # - name: ubuntu-focal
+  #   image: ubuntu:focal
+  # - name: debian-stretch
+  #   image: debian:stretch
+  - name: debian-buster
+    image: debian:buster
+  # - name: rpi3-ubuntu-bionic
+  #   image: balenalib/raspberrypi3-ubuntu:bionic
+  # - name: rpi3-debian-buster
+  #   image: balenalib/raspberrypi3-debian:buster
+  # - name: rpi4-ubuntu-bionic
+  #   image: balenalib/raspberrypi4-64-ubuntu:bionic
+  # - name: rpi4-debian-buster
+  #   image: balenalib/raspberrypi4-64-debian:buster
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: playbook.yml
+    cleanup: cleanup.yml
+  ansible_args:
+    - --verbose
+scenario:
+  name: default  # optional
+verifier:
+  name: testinfra
+  options:
+    verbose: true
+  lint:
+    name: flake8

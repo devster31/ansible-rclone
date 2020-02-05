@@ -1,0 +1,19 @@
+---
+# defaults file for rclone
+rclone__enabled: yes
+rclone__version: latest
+
+rclone__go_arch_map:
+  i386: "386"
+  x86_64: "amd64"
+  aarch64: "arm64"
+  armv7l: "arm"
+  armv6l: "arm"
+
+rclone__go_arch: "{{ rclone__go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+
+rclone__binary: /usr/local/bin/rclone
+rclone__dirname_mode: ugo+x
+rclone__binary_mode: 0755
+rclone__user: root
+rclone__group: root

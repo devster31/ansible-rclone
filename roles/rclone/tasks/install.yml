@@ -1,0 +1,107 @@
+---
+- name: install required packages
+  package:
+    name:
+      - python3-apt
+      - python3-pip
+      - python3-setuptools
+      - unzip
+    state: present
+  become: yes
+
+# - name: ensure setuptools
+#   pip:
+#     name:
+#       - setuptools
+#     state: latest
+#   become: yes
+
+- name: install github module
+  pip:
+    name:
+      - github3.py>=1.0.0a3
+  become: yes
+
+- block:
+  - name: detect latest rclone release
+    github_release:
+      action: latest_release
+      user: rclone
+      repo: rclone
+    register: _rclone__latest
+
+  - name: Set variable to latest stable version number
+    set_fact:
+      rclone__version: "{{ _rclone__latest.tag }}"
+
+  when: rclone__version is undefined or rclone__version == "latest"
+
+- block:
+  - name: Make sure that Ansible local facts directory exists
+    file:
+      path: /etc/ansible/facts.d
+      state: directory
+      mode: '0755'
+
+  - name: save rclone local facts
+    template:
+      src: etc/ansible/facts.d/rclone.fact.j2
+      dest: /etc/ansible/facts.d/rclone.fact
+      mode: '0755'
+    register: rclone__register_facts
+
+  tags: "role::rclone.facts"
+  become: yes
+
+- debug:
+    var: ansible_local
+
+- block:
+  - name: create temporary directory
+    tempfile:
+      state: directory
+    register: rclone__temp
+
+  - name: "get rclone {{ rclone__version }}"
+    unarchive:
+      creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+      dest: "{{ rclone__temp.path }}"
+      remote_src: yes
+      src: https://downloads.rclone.org/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+
+  - name: ensure rclone path exists
+    file:
+      state: directory
+      path: "{{ rclone__binary | dirname }}"
+      mode: "{{ rclone__dirname_mode }}"
+    become: yes
+
+  - name: copy rclone binary
+    copy:
+      src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone"
+      dest: "{{ rclone__binary }}"
+      mode: "{{ rclone__binary_mode }}"
+      owner: "{{ rclone__user }}"
+      group: "{{ rclone__group }}"
+      remote_src: true
+    become: yes
+
+  - name: use the registered var and the file module to remove the temporary file
+    file:
+      path: "{{ rclone__temp.path }}"
+      state: absent
+    when: rclone__temp.path is defined
+
+  when: not ansible_local.rclone.installed|d(false)
+  tags: "role::rclone.install"
+
+- block:
+  - name: download new version, force update
+    meta: noop
+
+  when:
+    - rclone__version == "latest"
+    - ansible_local.rclone.version|d(0) is version(_rclone__latest, '<')
+
+  tags: "role::rclone.update"
+...
