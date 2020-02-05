@@ -1,0 +1,5 @@
+---
+rclone__os_packages:
+  - gcc
+  - libpython3.5-dev
+  - libssl-dev
