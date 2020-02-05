@@ -1,7 +1,7 @@
-Role Name
+rclone
 =========
 
-A brief description of the role goes here.
+This role installs, updates, and configures [rclone](https://github.com/ncw/rclone).
 
 Requirements
 ------------
@@ -19,30 +19,50 @@ that can/should be set via parameters to the role. Any variables that are read
 from other roles and/or the global scope (ie. hostvars, group vars, etc.) should
 be mentioned here as well.
 
+```yaml
+---
+# defaults file for rclone
+rclone__enabled: yes
+rclone__version: latest
+
+rclone__go_arch_map:
+  i386: "386"
+  x86_64: "amd64"
+  aarch64: "arm64"
+  armv7l: "arm"
+  armv6l: "arm"
+
+rclone__go_arch: "{{ rclone__go_arch_map[ansible_architecture] | default(ansible_architecture) }}"
+
+rclone__binary: /usr/local/bin/rclone
+rclone__dirname_mode: ugo+x
+rclone__binary_mode: 0755
+rclone__user: root
+rclone__group: root
+```
+
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in
-regards to parameters that may need to be set for other roles, or variables that
-are used from other roles.
+None.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: rclone, x: 42 }
+```yaml
+---
+- hosts: all
+  roles:
+    - role: rclone
+...
+```
 
 License
 -------
 
-BSD
+GPLv2
 
-Author Information
-------------------
+Tests
+-----
 
-An optional section for the role authors to include contact information, or a
-website (HTML is not allowed).
+[molecule](https://molecule.readthedocs.io/en/latest/index.html)
