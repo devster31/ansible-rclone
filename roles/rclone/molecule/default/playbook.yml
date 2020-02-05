@@ -3,3 +3,4 @@
   hosts: all
   roles:
     - role: rclone
+      rclone__install_man: yes

@@ -102,22 +102,44 @@
       remote_src: true
     become: yes
 
-  - name: use the registered var and the file module to remove the temporary file
+  - block:
+    - name: install man packages
+      package:
+        name: man-db
+      tags: "role::rclone.packages"
+
+    - name: Make dir for local manpages
+      file:
+        path: "{{ rclone__man_path }}"
+        state: directory
+        mode: "0755"
+
+    - name: Copy rclone manpage
+      copy:
+        src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone.1"
+        dest: "{{ rclone__man_path }}/rclone.1"
+        mode: "0644"
+        remote_src: true
+
+    - name: Update mandb
+      command: mandb
+      changed_when: false
+
+    become: yes
+    when: rclone__install_man
+    tags: "role::rclone.man"
+
+  - name: remove the temporary directory
     file:
       path: "{{ rclone__temp.path }}"
       state: absent
     when: rclone__temp.path is defined
 
-  when: not ansible_local.rclone.installed|d(false)
-  tags: "role::rclone.install"
-
-- block:
-  - name: download new version, force update
-    meta: noop
-
   when:
-    - rclone__version == "latest"
-    - ansible_local.rclone.version|d(0) is version(_rclone__latest, '<')
+    (not ansible_local.rclone.installed|d(false)) or
+    (rclone__version != "latest" and
+     ansible_local.rclone.version|d() is version(rclone__version, '<>'))
+  tags: "role::rclone.install"
 
   tags: "role::rclone.update"
 ...

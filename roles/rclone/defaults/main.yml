@@ -1,6 +1,7 @@
 ---
 # defaults file for rclone
 rclone__enabled: yes
+# if specified needs to include 'v' at the beginning
 rclone__version: latest
 
 rclone__go_arch_map:
@@ -17,3 +18,7 @@ rclone__dirname_mode: ugo+x
 rclone__binary_mode: 0755
 rclone__user: root
 rclone__group: root
+
+rclone__install_man: no
+# without trailing slash
+rclone__man_path: /usr/local/share/man/man1
