@@ -4,7 +4,7 @@
     name: github3.py
     state: absent
 
-- name: remove cron local facts
+- name: remove local facts
   file:
     path: /etc/ansible/facts.d/rclone.fact
     state: absent
