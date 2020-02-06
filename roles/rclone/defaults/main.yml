@@ -22,3 +22,7 @@ rclone__group: root
 rclone__install_man: no
 # without trailing slash
 rclone__man_path: /usr/local/share/man/man1
+
+rclone__configure: no
+rclone__configs: []
+...

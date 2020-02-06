@@ -70,9 +70,6 @@
   become: yes
   tags: "role::rclone.facts"
 
-- debug:
-    var: ansible_local
-
 - block:
   - name: create temporary directory
     tempfile:
@@ -142,5 +139,15 @@
      ansible_local.rclone.version|d(rclone__version) is version(rclone__version, '<>'))
   tags: "role::rclone.install"
 
-  tags: "role::rclone.update"
+- include_tasks: configure.yml
+  args:
+    apply:
+      tags: "role::rclone.configure"
+  loop: "{{ rclone__configs }}"
+  loop_control:
+    loop_var: config
+  when:
+    - rclone__configure
+    - rclone__configs != []
+  tags: "role::rclone.configure"
 ...

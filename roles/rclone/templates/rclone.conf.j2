@@ -1,0 +1,7 @@
+{% for block in blocks | dict2items %}
+[{{ block.key }}]
+{% for element in block.value | dict2items %}
+{{ element.key }} = {{ element.value }}
+{% endfor %}
+
+{% endfor %}

@@ -1,0 +1,20 @@
+---
+- name: ensure user exists
+  user:
+    name: "{{ config.user }}"
+
+- name: ensue directory for config exists
+  file:
+    path: "{{ config.path | dirname }}"
+    owner: "{{ config.user }}"
+    state: directory
+
+- name: set up rclone config
+  template:
+    src: rclone.conf.j2
+    dest: "{{ config.path }}"
+    owner: "{{ config.user }}"
+    mode: "0600"
+  vars:
+    blocks: "{{ config.blocks }}"
+...
