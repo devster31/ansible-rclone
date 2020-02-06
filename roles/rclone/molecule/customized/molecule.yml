@@ -39,7 +39,7 @@ provisioner:
   lint:
     name: ansible-lint
   playbooks:
-    converge: playbook.yml
+    converge: converge.yml
     cleanup: ../default/cleanup.yml
   ansible_args:
     - --verbose
