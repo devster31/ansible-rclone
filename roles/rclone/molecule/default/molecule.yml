@@ -29,6 +29,7 @@ platforms:
 provisioner:
   name: ansible
   env:
+    ANSIBLE_DIFF_ALWAYS: 1
     ANSIBLE_STDOUT_CALLBACK: yaml
   lint:
     name: ansible-lint
