@@ -22,18 +22,3 @@ def test_binary(host):
     assert binary.user == "root"
     assert binary.group == "root"
     assert binary.mode == 0o755
-
-
-def test_man(host):
-    f = host.file("/usr/local/share/man/man1/rclone.1")
-
-    assert f.exists
-    assert f.is_file
-    assert f.mode == 0o644
-
-# todo: pointless test as local facts runs the same piece of code
-# def test_versions(host):
-#     version = host.ansible("setup")["ansible_facts"][
-#         "ansible_local"]["rclone"]["version"]
-#     assert host.check_output("rclone version").splitlines(
-#             )[0].split()[1] == version
