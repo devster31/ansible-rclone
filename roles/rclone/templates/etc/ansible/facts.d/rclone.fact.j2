@@ -13,6 +13,7 @@ def cmd_exists(cmd):
     return any(
         os.access(os.path.join(path, cmd), os.X_OK)
         for path in os.environ["PATH"].split(os.pathsep)
+        + [ "{{ rclone__binary | dirname }}" ]
     )
 
 
@@ -20,7 +21,7 @@ output = {'installed': cmd_exists('rclone')}
 
 try:
     output['version'] = subprocess.check_output(
-            ["rclone", "version"]
+            ["{{ rclone__binary }}", "version"]
         ).decode('utf-8').strip().splitlines()[0].split()[1]
 except Exception:
     pass

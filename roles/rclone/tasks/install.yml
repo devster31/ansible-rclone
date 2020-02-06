@@ -139,7 +139,7 @@
   when:
     (not ansible_local.rclone.installed|d(false)) or
     (rclone__version != "latest" and
-     ansible_local.rclone.version|d() is version(rclone__version, '<>'))
+     ansible_local.rclone.version|d(rclone__version) is version(rclone__version, '<>'))
   tags: "role::rclone.install"
 
   tags: "role::rclone.update"
