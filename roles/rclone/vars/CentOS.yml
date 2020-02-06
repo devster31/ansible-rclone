@@ -1,8 +1,4 @@
 ---
 rclone__os_packages:
-  - gcc
-  - libpython3.5-dev
-  - libssl-dev
-  - python3-apt
   - python3-pip
   - python3-setuptools

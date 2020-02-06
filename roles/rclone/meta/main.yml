@@ -8,9 +8,15 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - bionic
+        - xenial
     - name: Debian
       versions:
         - buster
+        - stretch
+    - name: CentOS
+      versions:
+        - '8'
+        - '7'
   galaxy_tags:
     - rclone
     - network

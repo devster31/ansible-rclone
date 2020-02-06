@@ -30,6 +30,12 @@ platforms:
   #   image: balenalib/raspberrypi4-64-ubuntu:bionic
   # - name: rpi4-debian-buster
   #   image: balenalib/raspberrypi4-64-debian:buster
+  - name: centos-7
+    image: centos:7
+    dockerfile: ../default/Dockerfile.j2
+  - name: centos-8
+    image: centos:8
+    dockerfile: ../default/Dockerfile.j2
 provisioner:
   name: ansible
   env:

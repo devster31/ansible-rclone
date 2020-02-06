@@ -1,0 +1,4 @@
+---
+rclone__os_packages:
+  - python-pip
+  - python-setuptools

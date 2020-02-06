@@ -7,17 +7,25 @@
     params:
       files:
         - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_version }}.yml"
+        - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
+        - "{{ ansible_facts.distribution }}.yml"
         - main.yml
       paths:
         - "vars"
   tags: "role::rclone.vars"
 
+- name: install EPEL for CentOS 7
+  package:
+    name: epel-release
+  become: yes
+  tags: "role::rclone.packages"
+  when:
+    - ansible_facts.distribution == "CentOS"
+    - ansible_facts.distribution_major_version is version('7', '=')
+
 - name: install required packages
   package:
     name: "{{ ([
-        'python3-apt',
-        'python3-pip',
-        'python3-setuptools',
         'unzip'
       ] + rclone__os_packages|d([])) | flatten }}"
     state: present
