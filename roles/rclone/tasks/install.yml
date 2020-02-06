@@ -32,12 +32,11 @@
   become: yes
   tags: "role::rclone.packages"
 
-# - name: ensure setuptools
-#   pip:
-#     name:
-#       - setuptools
-#     state: latest
-#   become: yes
+- name: ensure latest pip and setuptools
+  pip:
+    name:
+      - pip>=20
+  become: yes
 
 - block:
   - name: install github module
