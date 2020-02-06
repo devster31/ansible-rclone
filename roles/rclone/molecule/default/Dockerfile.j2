@@ -17,12 +17,12 @@ ENV {{ var }} {{ value }}
 RUN if [ $(command -v apt-get) ]; then \
         apt-get update \
         && apt-get install -y -q --no-install-recommends \
-            python3 \
-            python3-pip \
-            sudo \
             bash \
             ca-certificates \
             iproute2 \
+            python3 \
+            python3-pip \
+            sudo \
         && apt-get clean; \
     elif [ $(command -v dnf) ]; then \
         dnf makecache \
