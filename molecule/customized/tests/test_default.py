@@ -49,7 +49,13 @@ def test_config(host):
                "token = "
                "{\"access_token\":\"secret-token-\","
                "\"token_type\":\"bearer\","
-               "\"expiry\":\"0001-01-01T00:00:00Z\"}\n\n")
+               "\"expiry\":\"0001-01-01T00:00:00Z\"}\n\n"
+               "[encrypted-media]\n"
+               "type = crypt\n"
+               "remote = google-drive:media\n"
+               "filename_encryption = standard\n"
+               "password = <PASSWORD>\n"
+               "password2 = <PASSWORD2>\n\n")
 
     assert conf.exists
     assert conf.is_file

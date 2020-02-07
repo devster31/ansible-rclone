@@ -6,6 +6,7 @@
       rclone__version: v1.50.0
       rclone__binary: /opt/rclone/rclone
       rclone__install_man: yes
+      rclone__man_path: /usr/share/man/man1
       rclone__configure: yes
       rclone__configs:
         - user: root
@@ -16,3 +17,10 @@
               app_key: ~
               app_secret: ~
               token: '{"access_token":"secret-token-","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}'
+            encrypted-media:
+              properties:
+                type: crypt
+                remote: google-drive:media
+                filename_encryption: standard
+                password: <PASSWORD>
+                password2: <PASSWORD2>
