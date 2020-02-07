@@ -27,8 +27,8 @@
 - name: install required packages
   package:
     name: "{{ ([
-        'unzip'
-      ] + rclone__os_packages|d([])) | flatten }}"
+      'unzip'
+    ] + rclone__os_packages|d([])) | flatten }}"
     state: present
   become: yes
   tags: "role::rclone.packages"
@@ -40,105 +40,105 @@
   become: yes
 
 - block:
-  - name: install github module
-    pip:
-      name:
-        - github3.py>=1.0.0a3
-    become: yes
-    tags: "role::rclone.pip"
+    - name: install github module
+      pip:
+        name:
+          - github3.py>=1.0.0a3
+      become: yes
+      tags: "role::rclone.pip"
 
-  - name: detect latest rclone release
-    github_release:
-      action: latest_release
-      user: rclone
-      repo: rclone
-    register: _rclone__latest
+    - name: detect latest rclone release
+      github_release:
+        action: latest_release
+        user: rclone
+        repo: rclone
+      register: _rclone__latest
 
-  - name: Set variable to latest stable version number
-    set_fact:
-      rclone__version: "{{ _rclone__latest.tag }}"
+    - name: Set variable to latest stable version number
+      set_fact:
+        rclone__version: "{{ _rclone__latest.tag }}"
 
   when: rclone__version is undefined or rclone__version == "latest"
   tags: "role::rclone.github"
 
 - block:
-  - name: Make sure that Ansible local facts directory exists
-    file:
-      path: /etc/ansible/facts.d
-      state: directory
-      mode: '0755'
+    - name: Make sure that Ansible local facts directory exists
+      file:
+        path: /etc/ansible/facts.d
+        state: directory
+        mode: '0755'
 
-  - name: save rclone local facts
-    template:
-      src: etc/ansible/facts.d/rclone.fact.j2
-      dest: /etc/ansible/facts.d/rclone.fact
-      mode: '0755'
+    - name: save rclone local facts
+      template:
+        src: etc/ansible/facts.d/rclone.fact.j2
+        dest: /etc/ansible/facts.d/rclone.fact
+        mode: '0755'
 
   become: yes
   tags: "role::rclone.facts"
 
 - block:
-  - name: create temporary directory
-    tempfile:
-      state: directory
-    register: rclone__temp
-
-  - name: "get rclone {{ rclone__version }}"
-    unarchive:
-      creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
-      dest: "{{ rclone__temp.path }}"
-      remote_src: yes
-      src: https://downloads.rclone.org/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
-
-  - name: ensure rclone path exists
-    file:
-      state: directory
-      path: "{{ rclone__binary | dirname }}"
-      mode: "{{ rclone__dirname_mode }}"
-    become: yes
-
-  - name: copy rclone binary
-    copy:
-      src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone"
-      dest: "{{ rclone__binary }}"
-      mode: "{{ rclone__binary_mode }}"
-      owner: "{{ rclone__user }}"
-      group: "{{ rclone__group }}"
-      remote_src: true
-    become: yes
-
-  - block:
-    - name: install man packages
-      package:
-        name: man-db
-      tags: "role::rclone.packages"
-
-    - name: Make dir for local manpages
-      file:
-        path: "{{ rclone__man_path }}"
+    - name: create temporary directory
+      tempfile:
         state: directory
-        mode: "0755"
+      register: rclone__temp
 
-    - name: Copy rclone manpage
+    - name: "get rclone {{ rclone__version }}"
+      unarchive:
+        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        dest: "{{ rclone__temp.path }}"
+        remote_src: yes
+        src: https://downloads.rclone.org/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+
+    - name: ensure rclone path exists
+      file:
+        state: directory
+        path: "{{ rclone__binary | dirname }}"
+        mode: "{{ rclone__dirname_mode }}"
+      become: yes
+
+    - name: copy rclone binary
       copy:
-        src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone.1"
-        dest: "{{ rclone__man_path }}/rclone.1"
-        mode: "0644"
+        src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone"
+        dest: "{{ rclone__binary }}"
+        mode: "{{ rclone__binary_mode }}"
+        owner: "{{ rclone__user }}"
+        group: "{{ rclone__group }}"
         remote_src: true
+      become: yes
 
-    - name: Update mandb
-      command: mandb
-      changed_when: false
+    - block:
+        - name: install man packages
+          package:
+            name: man-db
+          tags: "role::rclone.packages"
 
-    become: yes
-    when: rclone__install_man
-    tags: "role::rclone.man"
+        - name: Make dir for local manpages
+          file:
+            path: "{{ rclone__man_path }}"
+            state: directory
+            mode: "0755"
 
-  - name: remove the temporary directory
-    file:
-      path: "{{ rclone__temp.path }}"
-      state: absent
-    when: rclone__temp.path is defined
+        - name: Copy rclone manpage
+          copy:
+            src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone.1"
+            dest: "{{ rclone__man_path }}/rclone.1"
+            mode: "0644"
+            remote_src: true
+
+        - name: Update mandb
+          command: mandb
+          changed_when: false
+
+      become: yes
+      when: rclone__install_man
+      tags: "role::rclone.man"
+
+    - name: remove the temporary directory
+      file:
+        path: "{{ rclone__temp.path }}"
+        state: absent
+      when: rclone__temp.path is defined
 
   when:
     (not ansible_local.rclone.installed|d(false)) or

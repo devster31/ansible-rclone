@@ -1,5 +1,6 @@
 ---
 galaxy_info:
+  role_name: rclone
   author: Daniele Riccucci
   description: A role to install and configure rclone
   license: GPLv2

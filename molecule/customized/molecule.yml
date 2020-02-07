@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
   env:
-    MOLECULE_NO_LOG: "false"
+    MOLECULE_NO_LOG: 'False'
 lint:
   name: yamllint
 platforms:
@@ -39,7 +39,7 @@ platforms:
 provisioner:
   name: ansible
   env:
-    ANSIBLE_DIFF_ALWAYS: 1
+    ANSIBLE_DIFF_ALWAYS: 'True'
     ANSIBLE_SKIP_TAGS: "role::rclone.github"
     ANSIBLE_STDOUT_CALLBACK: yaml
   lint:

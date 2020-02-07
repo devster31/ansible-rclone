@@ -1,5 +1,5 @@
 ---
-name: Molecule Test
+name: molecule test
 on: [push]
 jobs:
   build:
@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          path: 'roles/rclone'
 
       - name: Set up Python 3
         uses: actions/setup-python@v1
@@ -35,3 +37,4 @@ jobs:
           MOLECULE_SCENARIO: ${{ matrix.molecule-scenario }}
         run: |
           molecule test -s "${MOLECULE_SCENARIO}"
+        working-directory: ./roles/rclone
