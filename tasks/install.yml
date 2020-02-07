@@ -47,19 +47,47 @@
       become: yes
       tags: "role::rclone.pip"
 
-    - name: detect latest rclone release
+    - name: detect latest rclone release from github
       github_release:
         action: latest_release
         user: rclone
         repo: rclone
+      register: _rclone__latest_github
+
+    - name: set fact to latest github version
+      set_fact:
+        rclone__version: "{{ _rclone__latest_github.tag }}"
+
+  when: rclone__version == "latest_github"
+  tags: "role::rclone.github"
+
+- block:
+    - name: check rclone latest beta version
+      uri:
+        url: https://beta.rclone.org/version.txt
+        return_content: true
+      register: _rclone__latest_beta
+
+    - name: set fact to latest beta version
+      set_fact:
+        rclone__version: "{{ _rclone__latest_beta.content.split(' ')[1] | trim }}"
+
+  when: rclone__version == "beta"
+  tags: "role::rclone.beta"
+
+- block:
+    - name: check rclone latest stable version
+      uri:
+        url: https://downloads.rclone.org/version.txt
+        return_content: true
       register: _rclone__latest
 
-    - name: Set variable to latest stable version number
+    - name: set fact to latest stable version
       set_fact:
-        rclone__version: "{{ _rclone__latest.tag }}"
+        rclone__version: "{{ _rclone__latest.content.split(' ')[1] | trim }}"
 
   when: rclone__version is undefined or rclone__version == "latest"
-  tags: "role::rclone.github"
+  tags: "role::rclone.stable"
 
 - block:
     - name: Make sure that Ansible local facts directory exists
@@ -83,12 +111,31 @@
         state: directory
       register: rclone__temp
 
+    - name: "get rclone {{ rclone__version }} from github"
+      unarchive:
+        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        dest: "{{ rclone__temp.path }}"
+        remote_src: yes
+        src: https://github.com/rclone/rclone/releases/download/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+      when: rclone__version == "latest_github"
+      tags: "role::rclone.github"
+
+    - name: "get rclone {{ rclone__version }}"
+      unarchive:
+        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        dest: "{{ rclone__temp.path }}"
+        remote_src: yes
+        src: https://beta.rclone.org/rclone-beta-latest-linux-{{ rclone__go_arch }}.zip
+      when: rclone__version == "beta"
+      tags: "role::rclone.beta"
+
     - name: "get rclone {{ rclone__version }}"
       unarchive:
         creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
         remote_src: yes
         src: https://downloads.rclone.org/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+      tags: "role::rclone.stable"
 
     - name: ensure rclone path exists
       file:
