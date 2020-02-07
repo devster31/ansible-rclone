@@ -35,4 +35,3 @@ jobs:
           MOLECULE_SCENARIO: ${{ matrix.molecule-scenario }}
         run: |
           molecule test -s "${MOLECULE_SCENARIO}"
-        working-directory: ./roles/rclone
