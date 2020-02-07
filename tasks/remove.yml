@@ -23,6 +23,7 @@
   failed_when: no
   register: rclone__dirs_empty
   loop:
+    - /etc/ansible/facts.d
     - "{{ rclone__binary | dirname }}"
     - "{{ rclone__man_path }}"
 
@@ -34,4 +35,9 @@
   loop: "{{ rclone__dirs_empty.results }}"
   loop_control:
     loop_var: ls
+
+- include_tasks: remove_configs.yml
+  loop: "{{ rclone__configs }}"
+  loop_control:
+    loop_var: config
 ...

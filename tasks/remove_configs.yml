@@ -1,0 +1,14 @@
+---
+- name: remove config
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ '~/.config/rclone/rclone.conf' | expanduser }}"
+    - "{{ '~/.config/rclone' | expanduser }}"
+    - "{{ '~/.rclone.conf' | expanduser }}"
+    - "{{ '$XDG_CONFIG_HOME/rclone/rclone.conf' | expandvars }}"
+    - "{{ config.path }}"
+    - "{{ config.path | dirname }}"
+  become: yes
+  become_user: "{{ config.user }}"

@@ -2,7 +2,7 @@
 - import_tasks: install.yml
   when: rclone__enabled
 
-- import_tasks: cleanup.yml
+- import_tasks: remove.yml
   when: not rclone__enabled
   become: yes
 ...
