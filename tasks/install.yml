@@ -132,7 +132,7 @@
         creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
         remote_src: yes
-        src: https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+        src: https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
       when: rclone__version == "latest_github"
       tags: "role::rclone.github"
 
