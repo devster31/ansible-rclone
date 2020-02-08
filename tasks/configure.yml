@@ -10,9 +10,19 @@
     state: directory
 
 - name: set up rclone config
-  template:
-    src: rclone.conf.j2
-    dest: "{{ config.path }}"
+  copy:
+    content: |-
+      {% for block in blocks | dict2items %}
+      [{{ block.key }}]
+      {% for element in block.value | dict2items %}
+      {% if element.value == None %}
+      {{ element.key }} =
+      {% else %}
+      {{ element.key }} = {{ element.value }}
+      {% endif %}
+      {% endfor %}
+
+      {% endfor %}
     dest: "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') }}"
     owner: "{{ config.user }}"
     mode: "0600"
