@@ -1,0 +1,56 @@
+---
+- name: Verify
+  hosts: all
+
+  tasks:
+    - name: stat local fact file
+      stat:
+        path: /etc/ansible/facts.d/rclone.fact
+      register: rclone__fact_file
+
+    - name: assert file exist
+      assert:
+        that:
+          - rclone__fact_file.stat.exists
+
+    - name: stat binary
+      stat:
+        path: "/usr/local/bin/rclone"
+      register: rclone__binary_file
+      become: yes
+
+    - name: assert binary
+      assert:
+        that:
+          - rclone__binary_file.stat.exists
+          - rclone__binary_file.stat.executable
+          - rclone__binary_file.stat.mode == '0755'
+
+    - name: execute rclone version
+      command: "rclone version"
+      changed_when: no
+      register: rclone__version_check
+
+    - name: check version
+      assert:
+        that:
+          - rclone__version_check.rc == 0
+          - rclone__version_check.stdout_lines[0] is regex("^rclone v\\d.\\d{1,}.\\d{1,}-?\\d*?$")
+
+    - name: slurp rclone.conf files
+      slurp:
+        path: /root/.config/rclone/rclone.conf
+      register: rclone__root_conf
+
+    - name: set as fact content of rclone.conf
+      set_fact:
+        rclone__conf_content: |+
+          [openstack]
+          type = swift
+          env_auth = true
+          user = username
+          key = API_key_or_password
+
+    - name: assert config is as expected
+      assert:
+        that: (rclone__root_conf.content | b64decode) == rclone__conf_content

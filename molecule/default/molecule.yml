@@ -42,12 +42,11 @@ provisioner:
     cleanup: cleanup.yml
   ansible_args:
     - --verbose
-scenario:
-  name: default  # optional
 verifier:
-  name: testinfra
-  options:
-    verbose: true
+  name: ansible
+  env:
+    ANSIBLE_DIFF_ALWAYS: 'True'
+    ANSIBLE_STDOUT_CALLBACK: dense
   lint:
-    name: flake8
+    name: ansible-lint
 ...
