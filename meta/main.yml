@@ -14,10 +14,6 @@ galaxy_info:
       versions:
         - buster
         - stretch
-    - name: CentOS
-      versions:
-        - '8'
-        - '7'
   galaxy_tags:
     - rclone
     - network
