@@ -13,7 +13,7 @@ None.
 Usage
 -----
 
-1. Clone this repo into your local roles-directory or install via `ansible-galaxy install stefangweichinger.rclone`.
+1. Clone this repo into your local roles-directory or install via `ansible-galaxy install devster.rclone`.
 2. Add role to the hosts you want rclone installed to.
 
 Role Variables
@@ -128,8 +128,10 @@ Tests
 
 Tests are run using [molecule](https://molecule.readthedocs.io/en/latest/index.html)
 
-Currently there are three scenarios defined:
+These are the scenarios defined:
 
 * default: runs installation with default variables
 * customized: runs installation with `manpages` and configures [`rclone`](https://github.com/rclone/rclone)
+* beta: installs and checks against the beta version
+* github: uses GitHub to check for the latest tagged release
 * remove: tests removal of the role
