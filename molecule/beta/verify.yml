@@ -1,0 +1,39 @@
+---
+- name: Verify
+  hosts: all
+  vars_files: vars.yml
+
+  tasks:
+    - name: stat local fact file
+      stat:
+        path: /etc/ansible/facts.d/rclone.fact
+      register: rclone__fact_file
+
+    - name: assert file exist
+      assert:
+        that:
+          - rclone__fact_file.stat.exists
+
+    - name: stat binary
+      stat:
+        path: "{{ rclone__binary }}"
+      register: rclone__binary_file
+      become: yes
+
+    - name: assert binary
+      assert:
+        that:
+          - rclone__binary_file.stat.exists
+          - rclone__binary_file.stat.executable
+          - rclone__binary_file.stat.mode == '0755'
+
+    - name: execute rclone version
+      command: "{{ rclone__binary }} version"
+      changed_when: no
+      register: rclone__version_check
+
+    - name: check version
+      assert:
+        that:
+          - rclone__version_check.rc == 0
+          - rclone__version_check.stdout_lines[0] is regex("rclone v\\d.\\d{2}.\\d.*-beta")

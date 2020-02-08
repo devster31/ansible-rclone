@@ -8,7 +8,7 @@ jobs:
       max-parallel: 4
       matrix:
         ansible-version: [ '2.8.0', '2.9.0' ]
-        molecule-scenario: [ 'default', 'customized', 'remove' ]
+        molecule-scenario: [ 'default', 'customized', 'remove', 'beta' ]
 
     steps:
       - uses: actions/checkout@v2

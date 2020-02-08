@@ -1,0 +1,3 @@
+---
+rclone__version: beta
+rclone__binary: /usr/local/bin/rclone
