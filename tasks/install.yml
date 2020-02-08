@@ -1,20 +1,4 @@
 ---
-- name: gather OS-specific variables
-  include_vars:
-    file: "{{ item }}"
-  loop: "{{ query('first_found', params, errors='ignore') }}"
-  vars:
-    params:
-      files:
-        - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_version }}.yml"
-        - "{{ ansible_facts.distribution }}-{{ ansible_facts.distribution_major_version }}.yml"
-        - "{{ ansible_facts.distribution }}.yml"
-        - "{{ ansible_facts.os_family }}.yml"
-        - main.yml
-      paths:
-        - "vars"
-  tags: "role::rclone.vars"
-
 - name: install EPEL for CentOS 7
   package:
     name: epel-release
