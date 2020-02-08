@@ -3,11 +3,13 @@
   pip:
     name: github3.py
     state: absent
+  tags: "role::rclone.pip"
 
 - name: remove local facts
   file:
     path: /etc/ansible/facts.d/rclone.fact
     state: absent
+  tags: "role::rclone.facts"
 
 - name: remove files and man page
   file:
@@ -40,4 +42,5 @@
   loop: "{{ rclone__configs }}"
   loop_control:
     loop_var: config
+  tags: "role::rclone.configure"
 ...
