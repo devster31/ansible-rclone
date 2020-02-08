@@ -5,7 +5,7 @@
 
 - name: ensue directory for config exists
   file:
-    path: "{{ config.path | d("~/.config/rclone/rclone.conf" | expanduser) | dirname }}"
+    path: "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') | dirname }}"
     owner: "{{ config.user }}"
     state: directory
 
@@ -13,6 +13,7 @@
   template:
     src: rclone.conf.j2
     dest: "{{ config.path }}"
+    dest: "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') }}"
     owner: "{{ config.user }}"
     mode: "0600"
   vars:

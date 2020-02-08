@@ -8,7 +8,7 @@
     - "{{ '~/.config/rclone' | expanduser }}"
     - "{{ '~/.rclone.conf' | expanduser }}"
     - "{{ '$XDG_CONFIG_HOME/rclone/rclone.conf' | expandvars }}"
-    - "{{ config.path }}"
-    - "{{ config.path | dirname }}"
+    - "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') }}"
+    - "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') | dirname }}"
   become: yes
   become_user: "{{ config.user }}"
