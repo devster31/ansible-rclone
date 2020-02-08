@@ -50,9 +50,10 @@ provisioner:
   ansible_args:
     - --verbose
 verifier:
-  name: testinfra
-  options:
-    verbose: true
+  name: ansible
+  env:
+    ANSIBLE_DIFF_ALWAYS: 'True'
+    ANSIBLE_STDOUT_CALLBACK: yaml
   lint:
-    name: flake8
+    name: ansible-lint
 ...

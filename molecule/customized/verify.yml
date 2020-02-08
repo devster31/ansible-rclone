@@ -1,0 +1,97 @@
+---
+- name: Verify
+  hosts: all
+  vars_files: vars.yml
+
+  tasks:
+    - name: stat local fact file
+      stat:
+        path: /etc/ansible/facts.d/rclone.fact
+      register: rclone__fact_file
+
+    - name: assert file exist
+      assert:
+        that:
+          - rclone__fact_file.stat.exists
+
+    - name: stat binary
+      stat:
+        path: /etc/ansible/facts.d/rclone.fact
+      register: rclone__binary_file
+      become: yes
+
+    - name: assert binary
+      assert:
+        that:
+          - rclone__binary_file.stat.exists
+          - rclone__binary_file.stat.executable
+          - rclone__binary_file.stat.mode == '0755'
+
+    - name: stat custom man path
+      stat:
+        path: "{{ rclone__man_path }}"
+      register: rclone__custom_man_path
+
+    - name: that custom man path exists and is a directory
+      assert:
+        that:
+          - rclone__custom_man_path.stat.exists
+          - rclone__custom_man_path.stat.isdir
+
+    - name: stat man file
+      stat:
+        path: "{{ rclone__man_path ~ '/rclone.1' }}"
+      register: rclone__man_file
+
+    - name: that custom man path exists and is a directory
+      assert:
+        that:
+          - rclone__man_file.stat.exists
+          - rclone__man_file.stat.mode == '0644'
+
+    - name: execute rclone version
+      command: /opt/rclone/rclone version
+      changed_when: no
+      register: rclone__version_check
+
+    - name: set as fact output of rclone version
+      set_fact:
+        rclone__version_output: |-
+          rclone v1.50.0
+          - os/arch: linux/amd64
+          - go version: go1.13.3
+
+    - name: check version
+      assert:
+        that:
+          - rclone__version_check.rc == 0
+          - rclone__version_check.stdout == rclone__version_output
+
+    - name: slurp rclone.conf files
+      slurp:
+        path: /root/.local/rclone/rclone.conf
+      register: rclone__root_conf
+
+    - name: set as fact content of rclone.conf
+      set_fact:
+        rclone__conf_content: |
+          [dropbox]
+          type = dropbox
+          app_key =
+          app_secret =
+          token = {"access_token":"secret-token-","token_type":"bearer","expiry":"0001-01-01T00:00:00Z"}
+
+          [encrypted-media]
+          type = crypt
+          remote = google-drive:media
+          filename_encryption = standard
+          password = <PASSWORD>
+          password2 = <PASSWORD2>
+
+    - debug:
+       var: rclone__root_conf.content | b64decode
+
+    - name: assert config is as expected
+      assert:
+        that:
+          - (rclone__root_conf.content | b64decode) == rclone__conf_content
