@@ -1,5 +1,15 @@
 ---
 - name: Converge
   hosts: all
+
   roles:
     - role: rclone
+      rclone__configure: yes
+      rclone__configs:
+        - user: root
+          blocks:
+            openstack:
+              type: swift
+              env_auth: "true"
+              user: username
+              key: API_key_or_password
