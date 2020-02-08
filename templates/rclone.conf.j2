@@ -1,7 +1,11 @@
 {% for block in blocks | dict2items %}
 [{{ block.key }}]
 {% for element in block.value | dict2items %}
+{% if element.value == None %}
+{{ element.key }} =
+{% else %}
 {{ element.key }} = {{ element.value }}
+{% endif %}
 {% endfor %}
 
 {% endfor %}

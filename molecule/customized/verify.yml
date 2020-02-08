@@ -74,7 +74,7 @@
 
     - name: set as fact content of rclone.conf
       set_fact:
-        rclone__conf_content: |
+        rclone__conf_content: |+
           [dropbox]
           type = dropbox
           app_key =
