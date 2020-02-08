@@ -5,7 +5,7 @@
 
 - name: ensue directory for config exists
   file:
-    path: "{{ config.path | dirname }}"
+    path: "{{ config.path | d("~/.config/rclone/rclone.conf" | expanduser) | dirname }}"
     owner: "{{ config.user }}"
     state: directory
 
