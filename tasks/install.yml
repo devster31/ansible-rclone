@@ -26,20 +26,26 @@
 
 - name: install required packages
   package:
-    name: "{{ ([
-      'unzip'
-    ] + rclone__os_packages|d([])) | flatten }}"
+    name: unzip
     state: present
   become: yes
   tags: "role::rclone.packages"
 
-- name: ensure latest pip and setuptools
-  pip:
-    name:
-      - pip>=20
-  become: yes
-
 - block:
+    - name: install pip packages
+      package:
+        name: "{{ rclone__os_packages|d([]) }}"
+        state: present
+      become: yes
+      tags: "role::rclone.packages"
+
+    - name: ensure latest pip and setuptools
+      pip:
+        name:
+          - pip>=20
+      become: yes
+      tags: "role::rclone.pip"
+
     - name: install github module
       pip:
         name:
