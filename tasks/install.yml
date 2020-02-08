@@ -62,7 +62,7 @@
 
     - name: set fact to latest github version
       set_fact:
-        rclone__version: "{{ _rclone__latest_github.tag }}"
+        _rclone__version: "{{ _rclone__latest_github.tag }}"
 
   when: rclone__version == "latest_github"
   tags: "role::rclone.github"
@@ -76,7 +76,7 @@
 
     - name: set fact to latest beta version
       set_fact:
-        rclone__version: "{{ _rclone__latest_beta.content.split(' ')[1] | trim }}"
+        _rclone__version: "{{ _rclone__latest_beta.content.split(' ')[1] | trim }}"
 
   when: rclone__version == "beta"
   tags: "role::rclone.beta"
@@ -90,9 +90,19 @@
 
     - name: set fact to latest stable version
       set_fact:
-        rclone__version: "{{ _rclone__latest.content.split(' ')[1] | trim }}"
+        _rclone__version: "{{ _rclone__latest.content.split(' ')[1] | trim }}"
 
   when: rclone__version is undefined or rclone__version == "latest"
+  tags: "role::rclone.stable"
+
+- name: set fact to numeric version
+  set_fact:
+    _rclone__version: "{{ rclone__version }}"
+  when:
+    - rclone__version is defined
+    - rclone__version != "latest_github"
+    - rclone__version != "latest"
+    - rclone__version != "beta"
   tags: "role::rclone.stable"
 
 - block:
@@ -117,30 +127,35 @@
         state: directory
       register: rclone__temp
 
-    - name: "get rclone {{ rclone__version }} from github"
+    - name: "get rclone {{ _rclone__version }} from github"
       unarchive:
-        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
         remote_src: yes
-        src: https://github.com/rclone/rclone/releases/download/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+        src: https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
       when: rclone__version == "latest_github"
       tags: "role::rclone.github"
 
-    - name: "get rclone {{ rclone__version }}"
+
+
+    - name: "get rclone {{ _rclone__version }} from beta URL"
       unarchive:
-        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
         remote_src: yes
         src: https://beta.rclone.org/rclone-beta-latest-linux-{{ rclone__go_arch }}.zip
       when: rclone__version == "beta"
       tags: "role::rclone.beta"
 
-    - name: "get rclone {{ rclone__version }}"
+    - name: "get rclone {{ _rclone__version }} from stable URL"
       unarchive:
-        creates: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}"
+        creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
         remote_src: yes
-        src: https://downloads.rclone.org/{{ rclone__version }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}.zip
+        src: https://downloads.rclone.org/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
+      when:
+        - not rclone__version == "latest_github"
+        - not rclone__version == "beta"
       tags: "role::rclone.stable"
 
     - name: ensure rclone path exists
@@ -152,7 +167,7 @@
 
     - name: copy rclone binary
       copy:
-        src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone"
+        src: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}/rclone"
         dest: "{{ rclone__binary }}"
         mode: "{{ rclone__binary_mode }}"
         owner: "{{ rclone__user }}"
@@ -174,7 +189,7 @@
 
         - name: Copy rclone manpage
           copy:
-            src: "{{ rclone__temp.path }}/rclone-{{ rclone__version }}-linux-{{ rclone__go_arch }}/rclone.1"
+            src: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}/rclone.1"
             dest: "{{ rclone__man_path }}/rclone.1"
             mode: "0644"
             remote_src: true
@@ -195,8 +210,8 @@
 
   when:
     (not ansible_local.rclone.installed|d(false)) or
-    (rclone__version != "latest" and
-     ansible_local.rclone.version|d(rclone__version) is version(rclone__version, '<>'))
+    (ansible_local.rclone.version is defined and
+     ansible_local.rclone.version is version(_rclone__version, '<>'))
   tags: "role::rclone.install"
 
 - include_tasks: configure.yml
