@@ -88,10 +88,6 @@
           password = <PASSWORD>
           password2 = <PASSWORD2>
 
-    - debug:
-       var: rclone__root_conf.content | b64decode
-
     - name: assert config is as expected
       assert:
-        that:
-          - (rclone__root_conf.content | b64decode) == rclone__conf_content
+        that: (rclone__root_conf.content | b64decode) == rclone__conf_content
