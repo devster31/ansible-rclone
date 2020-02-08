@@ -16,7 +16,7 @@
 
     - name: stat binary
       stat:
-        path: /etc/ansible/facts.d/rclone.fact
+        path: "{{ rclone__binary }}"
       register: rclone__binary_file
       become: yes
 
@@ -50,7 +50,7 @@
           - rclone__man_file.stat.mode == '0644'
 
     - name: execute rclone version
-      command: /opt/rclone/rclone version
+      command: "{{ rclone__binary }} version"
       changed_when: no
       register: rclone__version_check
 
