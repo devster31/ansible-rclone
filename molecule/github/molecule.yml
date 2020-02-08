@@ -1,0 +1,58 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+  env:
+    MOLECULE_NO_LOG: 'False'
+lint:
+  name: yamllint
+platforms:
+  - name: ubuntu-xenial
+    image: ubuntu:xenial
+    dockerfile: ../default/Dockerfile.j2
+  - name: ubuntu-bionic
+    image: ubuntu:bionic
+    dockerfile: ../default/Dockerfile.j2
+  # - name: ubuntu-focal
+  #   image: ubuntu:focal
+  - name: debian-stretch
+    image: debian:stretch
+    dockerfile: ../default/Dockerfile.j2
+  - name: debian-buster
+    image: debian:buster
+    dockerfile: ../default/Dockerfile.j2
+  # - name: rpi3-ubuntu-bionic
+  #   image: balenalib/raspberrypi3-ubuntu:bionic
+  # - name: rpi3-debian-buster
+  #   image: balenalib/raspberrypi3-debian:buster
+  # - name: rpi4-ubuntu-bionic
+  #   image: balenalib/raspberrypi4-64-ubuntu:bionic
+  # - name: rpi4-debian-buster
+  #   image: balenalib/raspberrypi4-64-debian:buster
+  - name: centos-7
+    image: centos:7
+    dockerfile: ../default/Dockerfile.j2
+  - name: centos-8
+    image: centos:8
+    dockerfile: ../default/Dockerfile.j2
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_DIFF_ALWAYS: 'True'
+    ANSIBLE_STDOUT_CALLBACK: yaml
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: converge.yml
+    cleanup: ../default/cleanup.yml
+  ansible_args:
+    - --verbose
+verifier:
+  name: ansible
+  env:
+    ANSIBLE_DIFF_ALWAYS: 'True'
+    ANSIBLE_STDOUT_CALLBACK: yaml
+  lint:
+    name: ansible-lint
+...

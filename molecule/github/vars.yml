@@ -1,0 +1,3 @@
+---
+rclone__version: latest_github
+rclone__binary: /usr/local/bin/rclone
