@@ -26,7 +26,7 @@ def test_binary(host):
 
 
 def test_man(host):
-    f = host.file("/usr/local/share/man/man1/rclone.1")
+    f = host.file("/usr/share/man/man1/rclone.1")
 
     assert f.exists
     assert f.is_file
