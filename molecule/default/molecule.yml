@@ -30,6 +30,10 @@ platforms:
     image: centos:7
   - name: centos-8
     image: centos:8
+  - name: fedora-30
+    image: fedora:30
+  - name: fedora-31
+    image: fedora:31
 provisioner:
   name: ansible
   env:

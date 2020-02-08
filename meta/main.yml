@@ -14,6 +14,10 @@ galaxy_info:
       versions:
         - buster
         - stretch
+    - name: Fedora
+      versions:
+        - '30'
+        - '31'
   galaxy_tags:
     - rclone
     - network
