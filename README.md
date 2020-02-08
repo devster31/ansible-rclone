@@ -2,6 +2,8 @@ rclone
 =========
 
 [![molecule test](https://github.com/devster31/ansible-rclone/workflows/molecule%20test/badge.svg)](https://github.com/devster31/ansible-rclone/actions)
+[![Ansible Role](https://img.shields.io/ansible/role/46399.svg)](https://galaxy.ansible.com/devster31/rclone)
+[![Ansible Role Downloads](https://img.shields.io/ansible/role/d/46399.svg)](https://galaxy.ansible.com/devster31/rclone)
 
 This role installs, updates, and configures [`rclone`](https://github.com/rclone/rclone).
 
