@@ -20,5 +20,6 @@ galaxy_info:
         - '31'
   galaxy_tags:
     - rclone
-    - network
+    - cloud-storage
+    - sync
 dependencies: []
