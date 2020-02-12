@@ -1,6 +1,10 @@
 ---
 name: molecule test
-on: [push]
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
 jobs:
   build:
     runs-on: ubuntu-latest
