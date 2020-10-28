@@ -5,6 +5,7 @@
 
 - name: ensue directory for config exists
   file:
+    mode: 0775
     path: "{{ config.path | d(ansible_env.HOME ~ '/.config/rclone/rclone.conf') | dirname }}"
     owner: "{{ config.user }}"
     state: directory

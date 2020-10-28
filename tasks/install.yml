@@ -110,17 +110,17 @@
       unarchive:
         creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
+        mode: 0755
         remote_src: yes
         src: https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
       when: rclone__version == "latest_github"
       tags: "role::rclone.github"
 
-
-
     - name: "get rclone {{ _rclone__version }} from beta URL"
       unarchive:
         creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
+        mode: 0755
         remote_src: yes
         src: https://beta.rclone.org/rclone-beta-latest-linux-{{ rclone__go_arch }}.zip
       when: rclone__version == "beta"
@@ -130,6 +130,7 @@
       unarchive:
         creates: "{{ rclone__temp.path }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}"
         dest: "{{ rclone__temp.path }}"
+        mode: 0755
         remote_src: yes
         src: https://downloads.rclone.org/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
       when:
