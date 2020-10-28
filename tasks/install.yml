@@ -8,6 +8,17 @@
     - ansible_facts.distribution == "CentOS"
     - ansible_facts.distribution_major_version is version('7', '=')
 
+- name: fix EPEL repo links for CentOS 7
+  replace:
+    path: /etc/yum.repos.d/epel.repo
+    regexp: '^(metalink=http)s(.*)$'
+    replace: '\1\2'
+  become: yes
+  tags: "role::rclone.packages"
+  when:
+    - ansible_facts.distribution == "CentOS"
+    - ansible_facts.distribution_major_version is version('7', '=')
+
 - name: install required packages
   package:
     name: "{{ ( [
