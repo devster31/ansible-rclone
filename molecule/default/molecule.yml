@@ -30,22 +30,23 @@ platforms:
     image: centos:7
   - name: centos-8
     image: centos:8
-  - name: fedora-30
-    image: fedora:30
-  - name: fedora-31
-    image: fedora:31
+  - name: fedora-32
+    image: fedora:32
+  - name: fedora-33
+    image: fedora:33
 provisioner:
   name: ansible
-  ansible_args:
-    - --verbose
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
+    ANSIBLE_SKIP_TAGS: "role::rclone.github"
     ANSIBLE_STDOUT_CALLBACK: yaml
   playbooks:
     converge: converge.yml
+  ansible_args:
+    - --verbose
 verifier:
   name: ansible
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
-    ANSIBLE_STDOUT_CALLBACK: dense
+    ANSIBLE_STDOUT_CALLBACK: yaml
 ...

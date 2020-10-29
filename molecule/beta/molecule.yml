@@ -16,6 +16,7 @@ platforms:
     dockerfile: ../default/Dockerfile.j2
   - name: ubuntu-focal
     image: ubuntu:focal
+    dockerfile: ../default/Dockerfile.j2
   - name: debian-stretch
     image: debian:stretch
     dockerfile: ../default/Dockerfile.j2
@@ -36,6 +37,12 @@ platforms:
   - name: centos-8
     image: centos:8
     dockerfile: ../default/Dockerfile.j2
+  - name: fedora-32
+    image: fedora:32
+    dockerfile: ../default/Dockerfile.j2
+  - name: fedora-33
+    image: fedora:33
+    dockerfile: ../default/Dockerfile.j2
 provisioner:
   name: ansible
   env:
@@ -43,7 +50,6 @@ provisioner:
     ANSIBLE_STDOUT_CALLBACK: yaml
   playbooks:
     converge: converge.yml
-    cleanup: ../default/cleanup.yml
   ansible_args:
     - --verbose
 verifier:
