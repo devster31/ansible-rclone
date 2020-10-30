@@ -15,10 +15,12 @@
         - "vars"
   tags: "role::rclone.vars"
 
-- import_tasks: install.yml
+- name: import install.yml
+  import_tasks: install.yml
   when: rclone__enabled
 
-- import_tasks: remove.yml
+- name: import remove.yml
+  import_tasks: remove.yml
   when: not rclone__enabled
   become: yes
 ...
