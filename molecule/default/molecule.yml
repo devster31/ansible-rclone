@@ -3,17 +3,17 @@ dependency:
   name: galaxy
 driver:
   name: docker
-  env:
-    MOLECULE_NO_LOG: 'False'
-lint:
-  name: yamllint
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
 platforms:
   - name: ubuntu-xenial
     image: ubuntu:xenial
   - name: ubuntu-bionic
     image: ubuntu:bionic
-  # - name: ubuntu-focal
-  #   image: ubuntu:focal
+  - name: ubuntu-focal
+    image: ubuntu:focal
   - name: debian-stretch
     image: debian:stretch
   - name: debian-buster
@@ -36,21 +36,16 @@ platforms:
     image: fedora:31
 provisioner:
   name: ansible
+  ansible_args:
+    - --verbose
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
     ANSIBLE_STDOUT_CALLBACK: yaml
-  lint:
-    name: ansible-lint
   playbooks:
     converge: converge.yml
-    cleanup: cleanup.yml
-  ansible_args:
-    - --verbose
 verifier:
   name: ansible
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
     ANSIBLE_STDOUT_CALLBACK: dense
-  lint:
-    name: ansible-lint
 ...
