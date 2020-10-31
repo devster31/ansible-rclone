@@ -58,4 +58,6 @@ verifier:
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
     ANSIBLE_STDOUT_CALLBACK: yaml
+  ansible_args:
+    - --verbose
 ...
