@@ -3,6 +3,7 @@
   package:
     name: epel-release
   become: yes
+  check_mode: no
   tags: "role::rclone.packages"
   when:
     - ansible_facts.distribution == "CentOS"
@@ -14,6 +15,7 @@
     regexp: '^(metalink=http)s(.*)$'
     replace: '\1\2'
   become: yes
+  check_mode: no
   tags: "role::rclone.packages"
   when:
     - ansible_facts.distribution == "CentOS"
@@ -73,6 +75,7 @@
       uri:
         url: https://beta.rclone.org/version.txt
         return_content: true
+      check_mode: no
       register: _rclone__latest_beta
 
     - name: set fact to latest beta version
@@ -87,6 +90,7 @@
       uri:
         url: https://downloads.rclone.org/version.txt
         return_content: true
+      check_mode: no
       register: _rclone__latest
 
     - name: set fact to latest stable version
@@ -134,8 +138,10 @@
         dest: "{{ rclone__temp.path }}"
         mode: 0755
         remote_src: yes
-        src: https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
-      when: rclone__version == "latest_github"
+        src: "https://github.com/rclone/rclone/releases/download/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip"
+      when:
+        - not ansible_check_mode
+        - rclone__version == "latest_github"
       tags: "role::rclone.github"
 
     - name: "get rclone {{ _rclone__version }} from beta URL"
@@ -144,8 +150,10 @@
         dest: "{{ rclone__temp.path }}"
         mode: 0755
         remote_src: yes
-        src: https://beta.rclone.org/rclone-beta-latest-linux-{{ rclone__go_arch }}.zip
-      when: rclone__version == "beta"
+        src: "https://beta.rclone.org/rclone-beta-latest-linux-{{ rclone__go_arch }}.zip"
+      when:
+        - not ansible_check_mode
+        - rclone__version == "beta"
       tags: "role::rclone.beta"
 
     - name: "get rclone {{ _rclone__version }} from stable URL"
@@ -154,8 +162,9 @@
         dest: "{{ rclone__temp.path }}"
         mode: 0755
         remote_src: yes
-        src: https://downloads.rclone.org/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip
+        src: "https://downloads.rclone.org/{{ _rclone__version }}/rclone-{{ _rclone__version }}-linux-{{ rclone__go_arch }}.zip"
       when:
+        - not ansible_check_mode
         - not rclone__version == "latest_github"
         - not rclone__version == "beta"
       tags: "role::rclone.stable"
@@ -176,6 +185,7 @@
         group: "{{ rclone__group }}"
         remote_src: true
       become: yes
+      when: not ansible_check_mode
 
     - block:
         - name: install man packages
@@ -198,7 +208,7 @@
 
         - name: Update mandb
           command: mandb
-          changed_when: false
+          changed_when: no
 
       become: yes
       when: rclone__install_man

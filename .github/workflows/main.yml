@@ -36,11 +36,18 @@ jobs:
         run: |
           pip install molecule docker ansible~="${ANSIBLE_VERSION}"
 
-      - name: Test with molecule
+      - name: Run molecule check
         env:
           MOLECULE_SCENARIO: ${{ matrix.molecule-scenario }}
         run: |
-          molecule test -s "${MOLECULE_SCENARIO}"
+          molecule check --parallel -s "${MOLECULE_SCENARIO}"
+        working-directory: ./roles/rclone
+
+      - name: Run molecule test
+        env:
+          MOLECULE_SCENARIO: ${{ matrix.molecule-scenario }}
+        run: |
+          molecule test --parallel -s "${MOLECULE_SCENARIO}"
         working-directory: ./roles/rclone
 
   update:

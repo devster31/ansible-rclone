@@ -104,6 +104,16 @@ token = {"access_token":"secret-token-","token_type":"bearer","expiry":"0001-01-
 
 ```
 
+Caveats
+-------
+
+This role installs the following packages even while using `ansible --check` mode:
+
+* `epel-release` for CentOS 7
+* `python3-apt` for all Debian-based OS
+
+It also modified the `epel.repo` file to use `http` urls by default and not `https` on CentOS 7.
+
 Dependencies
 ------------
 
