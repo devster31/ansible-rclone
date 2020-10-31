@@ -34,7 +34,7 @@ jobs:
         env:
           ANSIBLE_VERSION: ${{ matrix.ansible-version }}
         run: |
-          pip install molecule docker ansible~="${ANSIBLE_VERSION}"
+          pip install 'molecule[docker]' docker yamllint ansible-lint ansible~="${ANSIBLE_VERSION}"
 
       - name: Run molecule check
         env:
