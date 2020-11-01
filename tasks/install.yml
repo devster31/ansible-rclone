@@ -215,16 +215,4 @@
     (ansible_local.rclone.version is defined and
      ansible_local.rclone.version is version(_rclone__version, '<>'))
   tags: "role::rclone.install"
-
-- include_tasks: configure.yml
-  args:
-    apply:
-      tags: "role::rclone.configure"
-  loop: "{{ rclone__configs }}"
-  loop_control:
-    loop_var: config
-  when:
-    - rclone__configure
-    - rclone__configs != []
-  tags: "role::rclone.configure"
 ...

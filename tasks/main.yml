@@ -19,6 +19,20 @@
   import_tasks: install.yml
   when: rclone__enabled
 
+- name: include configure.yml
+  include_tasks: configure.yml
+  args:
+    apply:
+      tags: "role::rclone.configure"
+  loop: "{{ rclone__configs }}"
+  loop_control:
+    loop_var: config
+  when:
+    - rclone__configure
+    - rclone__configs != []
+    - rclone__enabled
+  tags: "role::rclone.configure"
+
 - name: import remove.yml
   import_tasks: remove.yml
   when: not rclone__enabled
