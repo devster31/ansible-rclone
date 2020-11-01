@@ -19,13 +19,13 @@ jobs:
         with:
           path: 'roles/rclone'
 
-      - name: Set up Python 3
-        uses: actions/setup-python@v1
+      - name: Setup Python v3
+        uses: actions/setup-python@v2
         with:
           python-version: '~3.8'
 
       - name: setup-docker
-        uses: docker-practice/actions-setup-docker@0.0.1
+        uses: docker-practice/actions-setup-docker@1.0.2
         with:
           docker_version: 19.03
           docker_channel: stable
@@ -42,3 +42,29 @@ jobs:
         run: |
           molecule test -s "${MOLECULE_SCENARIO}"
         working-directory: ./roles/rclone
+
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          path: 'roles/rclone'
+
+      - name: Get YML Paths
+        uses: CumulusDS/get-yaml-paths-action@v0.1.0
+        with:
+          file: ./roles/rclone/meta/main.yml
+          description: galaxy_info.description
+        id: load_galaxy
+
+      - name: Update repo description
+        uses: actions/github-script@v3.0.0
+        with:
+          github-token: ${{secrets.TOKEN}}
+          script: |
+            github.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              description: "${{steps.load_galaxy.outputs.description}}"
+            })
+...
