@@ -23,6 +23,7 @@
   command: "ls -A {{ item }}"
   changed_when: no
   failed_when: no
+  check_mode: no
   register: rclone__dirs_empty
   loop:
     - /etc/ansible/facts.d
@@ -33,7 +34,8 @@
   file:
     path: "{{ ls.item }}"
     state: absent
-  when: ls.stdout | length == 0
+  when:
+    - ls.stdout | length == 0
   loop: "{{ rclone__dirs_empty.results }}"
   loop_control:
     loop_var: ls
