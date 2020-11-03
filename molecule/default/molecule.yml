@@ -47,7 +47,6 @@ provisioner:
   name: ansible
   env:
     ANSIBLE_DIFF_ALWAYS: 'True'
-    ANSIBLE_SKIP_TAGS: "role::rclone.github"
     ANSIBLE_STDOUT_CALLBACK: yaml
   playbooks:
     converge: converge.yml
